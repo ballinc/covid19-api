@@ -138,6 +138,7 @@ def history_country(data_type, country):
             raise CountryNotFound("This region cannot be found. Please try again.")
         elif len(ret) < 2:
             ret = ret[0]
+        return jsonify(ret)
     except CountryNotFound as e:
         return util.response_error(message=f"{type(e).__name__} : {e}", status=404)
     except Exception as e:
@@ -257,6 +258,7 @@ def proportion_country(data_type, country):
             raise CountryNotFound("This region cannot be found. Please try again.")
         elif len(ret) < 2:
             ret = ret[0]
+        return jsonify(ret)
     except CountryNotFound as e:
         return util.response_error(message=f"{type(e).__name__} : {e}", status=404)
     except Exception as e:
@@ -345,6 +347,7 @@ def daily_country(data_type, country):
             raise CountryNotFound("This region cannot be found. Please try again.")
         elif len(ret) < 2:
             ret = ret[0]
+        return jsonify(ret)
     except CountryNotFound as e:
         return util.response_error(message=f"{type(e).__name__} : {e}", status=404)
     except Exception as e:
