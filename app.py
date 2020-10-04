@@ -102,10 +102,11 @@ def all_country(country):
                     region["iso2"],
                     region["iso3"]):
                     ret.append(region)
-        if len(ret) < 2:
+        if len(ret) == 0:
+            raise CountryNotFound("This region cannot be found. Please try again.")
+        elif len(ret) < 2:
             ret = ret[0]
         return jsonify(ret)
-        raise CountryNotFound("This region cannot be found. Please try again.")
     except CountryNotFound as e:
         return util.response_error(message=f"{type(e).__name__} : {e}", status=404)
     except Exception as e:
@@ -133,10 +134,10 @@ def history_country(data_type, country):
                     data[region]["iso2"],
                     data[region]["iso3"]):
                     ret.append(data[region])
-        if len(ret) < 2:
+        if len(ret) == 0:
+            raise CountryNotFound("This region cannot be found. Please try again.")
+        elif len(ret) < 2:
             ret = ret[0]
-        return jsonify(ret)
-        raise CountryNotFound("This region cannot be found. Please try again.")
     except CountryNotFound as e:
         return util.response_error(message=f"{type(e).__name__} : {e}", status=404)
     except Exception as e:
@@ -252,10 +253,10 @@ def proportion_country(data_type, country):
                     p["iso2"] = data[region]["iso2"]
                     p["iso3"] = data[region]["iso3"]
                     ret.append(p)
-        if len(ret) < 2:
+        if len(ret) == 0:
+            raise CountryNotFound("This region cannot be found. Please try again.")
+        elif len(ret) < 2:
             ret = ret[0]
-        return jsonify(ret)
-        raise CountryNotFound("This region cannot be found. Please try again.")
     except CountryNotFound as e:
         return util.response_error(message=f"{type(e).__name__} : {e}", status=404)
     except Exception as e:
@@ -340,10 +341,10 @@ def daily_country(data_type, country):
                     p["iso2"] = data[region]["iso2"]
                     p["iso3"] = data[region]["iso3"]
                     ret.append(p)
-        if len(ret) < 2:
+        if len(ret) == 0:
+            raise CountryNotFound("This region cannot be found. Please try again.")
+        elif len(ret) < 2:
             ret = ret[0]
-        return jsonify(ret)
-        raise CountryNotFound("This region cannot be found. Please try again.")
     except CountryNotFound as e:
         return util.response_error(message=f"{type(e).__name__} : {e}", status=404)
     except Exception as e:
