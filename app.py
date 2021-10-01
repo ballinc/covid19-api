@@ -455,7 +455,9 @@ class All(Resource):
 
 @api.route(f"/api/{API_VERSION}/all/<country>/")
 class AllSelector(Resource):
-    @api.doc(responses=responses)
+    @api.doc(responses=responses,
+    params={"country": "Full name or ISO-3166-1. Comma separate for multiple countries."})
+    
     def get(self, country):
         return all_country(country)
 
@@ -463,7 +465,8 @@ class AllSelector(Resource):
 @api.route(f"/api/{API_VERSION}/history/<data_type>/")
 class HistoryDataType(Resource):
     @api.doc(
-        responses=responses)
+        responses=responses,
+        params={"data_type": "Input accepted : `confirmed` | `recovered` | `deaths` | `vaccinated`"})
     def get(self, data_type: int):
         return history(data_type)
 
@@ -471,7 +474,7 @@ class HistoryDataType(Resource):
 @api.route(f"/api/{API_VERSION}/history/<data_type>/<country>/")
 class HistoryDataTypeCountry(Resource):
     @api.doc(responses=responses,
-    params={"data_type": "Input accepted : `confirmed` | `recovered` | `deaths` | `vaccinated`", "country": "Full name or ISO-3166-1"})
+    params={"data_type": "Input accepted : `confirmed` | `recovered` | `deaths` | `vaccinated`", "country": "Full name or ISO-3166-1. Comma separate for multiple countries."})
     def get(self, data_type: str, country: str):
         return history_country(data_type, country)
 
@@ -479,7 +482,7 @@ class HistoryDataTypeCountry(Resource):
 @api.route(f"/api/{API_VERSION}/history/<data_type>/<country>/<region>")
 class HistoryDataTypeRegion(Resource):
     @api.doc(responses=responses,
-    params={"data_type": "Input accepted : `confirmed` | `recovered` | `deaths` | `vaccinated`", "country": "Full name or ISO-3166-1", "region": "Region name"})
+    params={"data_type": "Input accepted : `confirmed` | `recovered` | `deaths` | `vaccinated`", "country": "Full name or ISO-3166-1. Comma separate for multiple countries.", "region": "Region name"})
     def get(self, data_type: str, country: str, region: str):
         return history_region(data_type, country, region)
 
@@ -487,7 +490,7 @@ class HistoryDataTypeRegion(Resource):
 @api.route(f"/api/{API_VERSION}/history/<data_type>/<country>/regions")
 class HistoryDataTypeRegions(Resource):
     @api.doc(responses=responses,
-    params={"data_type": "Input accepted : `confirmed` | `recovered` | `deaths` | `vaccinated`", "country": "Full name or ISO-3166-1"})
+    params={"data_type": "Input accepted : `confirmed` | `recovered` | `deaths` | `vaccinated`", "country": "Full name or ISO-3166-1. Comma separate for multiple countries."})
     def get(self, data_type: str, country: str):
         return history_region_all(data_type, country)
 
@@ -518,7 +521,7 @@ class ProportionDataTypeTotal(Resource):
 @api.route(f"/api/{API_VERSION}/proportion/<data_type>/<country>/")
 class ProportionDataTypeCountry(Resource):
     @api.doc(responses=responses,
-    params={"data_type": "Input accepted : `confirmed` | `recovered` | `deaths` | `vaccinated`", "country": "Full name or ISO-3166-1"})
+    params={"data_type": "Input accepted : `confirmed` | `recovered` | `deaths` | `vaccinated`", "country": "Full name or ISO-3166-1. Comma separate for multiple countries."})
     def get(self, data_type: str, country: str):
         return proportion_country(data_type, country)
 
@@ -539,7 +542,7 @@ class DailyDataTypeTotal(Resource):
 @api.route(f"/api/{API_VERSION}/daily/<data_type>/<country>/")
 class DailyDataTypeCountry(Resource):
     @api.doc(responses=responses,
-    params={"data_type": "Input accepted : `confirmed` | `recovered` | `deaths` | `vaccinated`", "country": "Full name or ISO-3166-1"})
+    params={"data_type": "Input accepted : `confirmed` | `recovered` | `deaths` | `vaccinated`", "country": "Full name or ISO-3166-1. Comma separate for multiple countries."})
     def get(self, data_type: str, country: str):
         return daily_country(data_type, country)
 
@@ -560,7 +563,7 @@ class ProportionDailyDataTypeTotal(Resource):
 @api.route(f"/api/{API_VERSION}/proportion-daily/<data_type>/<country>")
 class ProportionDailyDataTypeCountry(Resource):
     @api.doc(responses=responses,
-    params={"data_type": "Input accepted : `confirmed` | `recovered` | `deaths` | `vaccinated`", "country": "Full name or ISO-3166-1"})
+    params={"data_type": "Input accepted : `confirmed` | `recovered` | `deaths` | `vaccinated`", "country": "Full name or ISO-3166-1. Comma separate for multiple countries."})
     def get(self, data_type: str, country: str):
         return proportion_daily_country(data_type, country)
 
