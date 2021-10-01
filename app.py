@@ -91,14 +91,21 @@ def all_data():
 def all_country(country):
     try:
         data = util.read_json("data.json")
+        ret = []
+        countries = country.split(',')
         for region in data:
-            if util.pattern_match(
-                country,
-                region["country"],
-                region["iso2"],
-                region["iso3"]):
-                return jsonify(region)
-        raise CountryNotFound("This region cannot be found. Please try again.")
+            for c in countries:
+                if util.pattern_match(
+                    c,
+                    region["country"],
+                    region["iso2"],
+                    region["iso3"]):
+                    ret.append(region)
+        if len(ret) == 0:        
+            raise CountryNotFound("This region cannot be found. Please try again.")
+        elif len(ret) == 1:
+            ret = ret[0]
+        return jsonify(ret)
     except CountryNotFound as e:
         return util.response_error(message=f"{type(e).__name__} : {e}", status=404)
     except Exception as e:
@@ -116,16 +123,22 @@ def history(data_type):
 def history_country(data_type, country):
     try:
         data = util.read_json(f"csv_{data_type}.json")
+        ret = []
+        countries = country.split(',')
         for region in list(data.keys()):
-            if util.pattern_match(
-                country,
-                region,
-                data[region]["iso2"],
-                data[region]["iso3"]):
-                ret = data[region]
-                ret["name"] = region
-                return jsonify(ret)
-        raise CountryNotFound("This region cannot be found. Please try again.")
+            for c in countries:
+                if util.pattern_match(
+                    c,
+                    region,
+                    data[region]["iso2"],
+                    data[region]["iso3"]):
+                    data[region]["name"] = region
+                    ret.append(data[region])
+        if len(ret) == 0:
+            raise CountryNotFound("This region cannot be found. Please try again.")
+        elif len(ret) == 1:
+            ret = ret[0]
+        return jsonify(ret)
     except CountryNotFound as e:
         return util.response_error(message=f"{type(e).__name__} : {e}", status=404)
     except Exception as e:
@@ -219,27 +232,35 @@ def proportion(data_type):
 def proportion_country(data_type, country):
     try:
         data = util.read_json(f"csv_{data_type}.json")
-        ret = {"proportion" : {}}
+        ret = []
+        countries = country.split(',')
         for region in list(data.keys()):
-            if util.pattern_match(
-                country,
-                region,
-                data[region]["iso2"],
-                data[region]["iso3"]):
-                if data[region]["iso3"] in util.populations:
-                    pop = float(util.populations[data[region]["iso3"]])
-                else:
-                    util.populations = util.csv_to_dict(util.CSV_POPULATIONS)
-                    pop = float(util.populations[data[region]["iso3"]])
+            for c in countries:
+                obj = {"proportion" : {}}
+                if util.pattern_match(
+                    c,
+                    region,
+                    data[region]["iso2"],
+                    data[region]["iso3"]):
+                    if data[region]["iso3"] in util.populations:
+                        pop = float(util.populations[data[region]["iso3"]])
+                    else:
+                        util.populations = util.csv_to_dict(util.CSV_POPULATIONS)
+                        pop = float(util.populations[data[region]["iso3"]])
 
-                for d, h in data[region]["history"].items():
-                    ret["proportion"][d] = f"{round(h / pop * 100, 5):.5f}"
+                    for d, h in data[region]["history"].items():
+                        obj["proportion"][d] = f"{round(h / pop * 100, 5):.5f}"
 
-                ret["iso2"] = data[region]["iso2"]
-                ret["iso3"] = data[region]["iso3"]
-                ret["name"] = region
-                return jsonify(ret)
-        raise CountryNotFound("This region cannot be found. Please try again.")
+                    obj["iso2"] = data[region]["iso2"]
+                    obj["iso3"] = data[region]["iso3"]
+                    obj["name"] = region
+
+                    ret.append(obj)
+        if len(ret) == 0:       
+            raise CountryNotFound("This region cannot be found. Please try again.")
+        elif len(ret) == 1:
+            ret = ret[0]
+        return jsonify(ret)
     except CountryNotFound as e:
         return util.response_error(message=f"{type(e).__name__} : {e}", status=404)
     except Exception as e:
@@ -307,22 +328,31 @@ def daily_region_world(data_type):
 def daily_country(data_type, country):
     try:
         data = util.read_json(f"csv_{data_type}.json")
-        ret = {"daily" : {}}
+        ret = []
+        countries = country.split(',')
+        
         for region in list(data.keys()):
-            if util.pattern_match(
-                country,
-                region,
-                data[region]["iso2"],
-                data[region]["iso3"]):
-                prev = 0
-                for d, h in data[region]["history"].items():
-                    ret["daily"][d] = h - prev
-                    prev = h
-                ret["iso2"] = data[region]["iso2"]
-                ret["iso3"] = data[region]["iso3"]
-                ret["name"] = region
-                return jsonify(ret)
-        raise CountryNotFound("This region cannot be found. Please try again.")
+            for c in countries:
+                obj = {"daily" : {}}
+                if util.pattern_match(
+                    c,
+                    region,
+                    data[region]["iso2"],
+                    data[region]["iso3"]):
+                    prev = 0
+                    for d, h in data[region]["history"].items():
+                        obj["daily"][d] = h - prev
+                        prev = h
+                    obj["iso2"] = data[region]["iso2"]
+                    obj["iso3"] = data[region]["iso3"]
+                    obj["name"] = region
+
+                    ret.append(obj)
+        if len(ret) == 0:        
+            raise CountryNotFound("This region cannot be found. Please try again.")
+        elif len(ret) == 1:
+            ret = ret[0]
+        return jsonify(ret)
     except CountryNotFound as e:
         return util.response_error(message=f"{type(e).__name__} : {e}", status=404)
     except Exception as e:
@@ -380,29 +410,36 @@ def proportion_daily_region_world(data_type):
 def proportion_daily_country(data_type, country):
     try:
         data = util.read_json(f"csv_{data_type}.json")
-        ret = {"proportion-daily" : {}}
+        ret = []
+        countries = country.split(',')
         for region in list(data.keys()):
-            if util.pattern_match(
-                country,
-                region,
-                data[region]["iso2"],
-                data[region]["iso3"]):
+            for c in countries:
+                obj = {"proportion-daily" : {}}
+                if util.pattern_match(
+                    c,
+                    region,
+                    data[region]["iso2"],
+                    data[region]["iso3"]):
 
-                if data[region]["iso3"] in util.populations:
-                    pop = float(util.populations[data[region]["iso3"]])
-                else:
-                    util.populations = util.csv_to_dict(util.CSV_POPULATIONS)
-                    pop = float(util.populations[data[region]["iso3"]])
+                    if data[region]["iso3"] in util.populations:
+                        pop = float(util.populations[data[region]["iso3"]])
+                    else:
+                        util.populations = util.csv_to_dict(util.CSV_POPULATIONS)
+                        pop = float(util.populations[data[region]["iso3"]])
 
-                prev = 0
-                for d, h in data[region]["history"].items():
-                    ret["proportion-daily"][d] = f"{round((h - prev) / pop * 100, 10):.10f}"
-                    prev = h
-                ret["iso2"] = data[region]["iso2"]
-                ret["iso3"] = data[region]["iso3"]
-                ret["name"] = region
-                return jsonify(ret)
-        raise CountryNotFound("This region cannot be found. Please try again.")
+                    prev = 0
+                    for d, h in data[region]["history"].items():
+                        obj["proportion-daily"][d] = f"{round((h - prev) / pop * 100, 10):.10f}"
+                        prev = h
+                    obj["iso2"] = data[region]["iso2"]
+                    obj["iso3"] = data[region]["iso3"]
+                    obj["name"] = region
+                    ret.append(obj)
+        if len(ret) == 0:        
+            raise CountryNotFound("This region cannot be found. Please try again.")
+        elif len(ret) == 1:
+            ret = ret[0]
+        return jsonify(ret)
     except CountryNotFound as e:
         return util.response_error(message=f"{type(e).__name__} : {e}", status=404)
     except Exception as e:
